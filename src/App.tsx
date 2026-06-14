@@ -7,7 +7,7 @@ import { VideoPlayer } from './components/VideoPlayer';
 function App() {
   const [activeFormat, setActiveFormat] = useState<FilmFormat>(FILM_FORMATS[0]);
   const [videoSrc, setVideoSrc] = useState<string>('/demo.mp4');
-  const [isCropMode, setIsCropMode] = useState<boolean>(true);
+  const [isCropMode, setIsCropMode] = useState<boolean>(false);
 
   // Clean up object URLs on unmount to prevent memory leaks
   useEffect(() => {
