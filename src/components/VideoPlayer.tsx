@@ -337,6 +337,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           <video
             ref={videoRef}
             src={videoSrc || undefined}
+            poster={videoSrc === '/demo.mp4' ? '/poster.jpg' : undefined}
             playsInline
             crossOrigin="anonymous"
             loop
