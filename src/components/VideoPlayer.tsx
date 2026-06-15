@@ -286,9 +286,11 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   };
 
   // Calculate top/bottom black bars height.
-  // The container runs at a fixed 1.43:1 aspect ratio.
-  // The height of the black bars on top and bottom is ((1 - 1.43 / ratio) / 2) * 100%
-  const maskHeightPercent = ((1 - 1.43 / activeFormat.ratio) / 2) * 100;
+  // The container runs at a fixed 1.43:1 aspect ratio (or full viewport in fullscreen).
+  const effectiveRatioForHeight = activeFormat.ratio === 1.85 ? 1.90 : activeFormat.ratio;
+  const maskHeightPercent = ((1 - 1.43 / effectiveRatioForHeight) / 2) * 100;
+
+  const sideOffsetPercent = activeFormat.ratio === 1.85 ? ((1 - 1.85 / 1.90) / 2) * 100 : 0;
 
   return (
     <div
@@ -333,7 +335,14 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
       {/* Video element and absolute aspect-ratio wrapper */}
       <div className="video-viewport" onClick={togglePlay}>
-        <div className="video-content-wrapper">
+        <div
+          className="video-content-wrapper"
+          style={{
+            clipPath: sideOffsetPercent > 0
+              ? `inset(0% ${sideOffsetPercent}% 0% ${sideOffsetPercent}%)`
+              : 'inset(0% 0% 0% 0%)'
+          }}
+        >
           <video
             ref={videoRef}
             src={videoSrc || undefined}
@@ -354,6 +363,14 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           className="mask-bar mask-bottom"
           style={{ height: `${maskHeightPercent}%` }}
         />
+        <div
+          className="mask-side mask-left"
+          style={{ width: `${sideOffsetPercent}%` }}
+        />
+        <div
+          className="mask-side mask-right"
+          style={{ width: `${sideOffsetPercent}%` }}
+        />
 
         {/* Sliding Aspect Ratio Tag Label */}
         <div
@@ -364,7 +381,13 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
             pointerEvents: showControls || !isPlaying ? 'auto' : 'none'
           }}
         >
-          <span className="ratio-tag-pill">{activeFormat.ratioText}</span>
+          <span className="ratio-tag-pill">
+            {activeFormat.ratioText.includes('|') ? (
+              activeFormat.ratioText.split('|')[0].trim()
+            ) : (
+              activeFormat.ratioText
+            )}
+          </span>
           <span className="ratio-tag-name">{activeFormat.name}</span>
         </div>
 

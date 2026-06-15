@@ -41,7 +41,7 @@ export const FILM_FORMATS: FilmFormat[] = [
     id: 'dolbyVision',
     name: 'Dolby Vision',
     ratio: 1.85,
-    ratioText: '1.85:1',
+    ratioText: '1.85:1 | 2.39:1',
     description: 'Modern high dynamic range theatrical format, utilizing a 1.85:1 flat aspect ratio to deliver stunning contrast, deep blacks, and vibrant colors.',
   },
 ];
@@ -172,7 +172,16 @@ export const FormatSelector: React.FC<FormatSelectorProps> = ({
               </div>
               <div className="format-info">
                 <span className="format-name">{format.name}</span>
-                <span className="format-ratio">{format.ratioText}</span>
+                <span className="format-ratio">
+                  {format.ratioText.includes('|') ? (
+                    <>
+                      <span className="ratio-highlight">{format.ratioText.split('|')[0]}</span>
+                      <span className="ratio-muted">| {format.ratioText.split('|')[1]}</span>
+                    </>
+                  ) : (
+                    format.ratioText
+                  )}
+                </span>
               </div>
             </button>
           );
